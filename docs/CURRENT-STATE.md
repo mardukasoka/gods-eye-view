@@ -1,5 +1,62 @@
 # God's Eye View Current State
 
+AIS encodes speed over ground in 0.1-knot units and course over ground in
+0.1-degree units, reserving the top code of each field for "not available", so
+those reports arrive as 102.3 knots and 360 degrees. Both are stored as unknown,
+and vessel cards, the HUD and analyst queries show a missing measurement rather
+than a reading. Heading keeps its existing separate check for its own sentinel.
+Genuine readings are unchanged, including a stopped vessel's zero and the
+highest speed and course the fields can encode.
+
+Native `<select>` controls declare a dark colour scheme and explicit option
+colours, so the browser-painted option list matches the panel it drops out of.
+The scheme is declared on the controls rather than on the document root, so
+hand-tuned scrollbar and text-input skins are unchanged. Applies to the HUD
+layout, Scenes, CCTV camera, Radio filter and Draw colour menus.
+
+Vessel snapshot completeness is separate from freshness. A current snapshot with
+rejected or duplicate records shows PARTIAL with accepted/received counts; stale
+or unknown freshness and transport failures retain their warnings. Partial
+snapshots still retain missing contacts within the existing age and row limits.
+A complete successful snapshot clears the partial indicator.
+
+Director imports now open a non-mutating preview before Apply. EDIT DETAILS
+authors validated anchor, camera, pack and interaction drafts; SHARE SCENE exports
+a selected scene or a bounded bundle of explicitly chosen pack files. Bundled
+bytes remain in memory until replacement/teardown and require reimport after a
+page reload. Stop releases rendering while retaining replay bytes. Cancellation
+and stale drafts cannot replace newer project state. See [authoring and sharing](DIRECTOR-SHARING.md).
+
+Director version-6 documents add bounded, scene-local feature actions. Settled
+LOAD/seek exposes keyboard-accessible text/source cards, anchor focus, explicit
+shot transitions and admitted layer state changes. Pointer claims take priority;
+Stop/replacement/teardown cancel pending actions and release handlers and UI.
+Same-shot seeks rebuild selected packs and restore declared layer baselines.
+See [scene actions](DIRECTOR-INTERACTIONS.md). Existing scenes/assets and credit remain.
+
+Director version-5 documents add scene-local data-pack manifests and per-shot
+selection. Registered sources acquire bounded, cancellable assets separately from
+GeoJSON, PNG and manually played media presentation. Storage paths, attribution
+and geographic placement remain distinct; Stop/replacement releases resources.
+Import acquires nothing. See [data packs](DIRECTOR-DATA-PACKS.md). Existing scene
+content, assets and credit remain unchanged.
+
+Director version-4 documents add named geographic anchors and optional explicit
+camera moves with easing, duration and holds. Playback and seek share one
+coordinate sampler; navigation/manual input revokes authored motion and pending
+holds. Anchor heights and explicit endpoints require the WGS84 ellipsoid
+reference. Legacy projects retain their ordinary flights, content and edits.
+See [camera directions](DIRECTOR-CAMERA.md).
+
+Realtime voice composes separate connection, response/tool, Radio handoff, input
+and audio-meter, cost, viewport-context and diagnostic owners. The existing
+controller exports and session/backend contracts remain available. Tool protocol,
+response wording, push-to-talk timing, model preferences and Radio confirmation
+order are preserved. Stopped connections, stale offers and delayed captures cannot affect a
+replacement session; audio meters release failed initialization and reject revoked
+frames. Delayed action results and post-capture continuations cannot resume a
+stopped conversation or send output into a replacement. See [voice ownership](VOICE-OWNERSHIP.md).
+
 The application shell composes focused state owners for navigation, destination
 lookup/orbit, Cockpit, visual settings, panel layout, aircraft display and layer
 bindings. Keyboard/display subscriptions have a separate lifetime; existing
@@ -12,12 +69,27 @@ Director's ordered shot runner is exported independently of rendering, UI,
 storage and scene content. The existing scene controller supplies an adapter for
 visual/layer state, camera travel, media holds and release. Playback cancellation,
 preview cleanup, saved projects and all scene assets/attribution are preserved.
-Timeline extraction and a shareable scene/data-pack format are planned in
-[Director](DIRECTOR.md); those follow-up capabilities are not implemented yet.
+Pure authored-time/seek calculations and a playback clock now own timing,
+hold deadlines and subscriptions. Stop immediately clears timers and settles
+holds; stale tick callbacks cannot publish into a replacement. Registered pack
+rules own presentation overrides and Nepal map fallback without changing saved
+shots or content. Scene-document validation and legacy migration now have separate
+owners. Invalid imports preserve the current project; unreadable saved projects
+are protected from fallback writes. Version 6 is the export format, with
+zero pitch, low camera heights, scope and detection edits preserved. See [the document contract](SCENE-DOCUMENT.md);
+see [Director](DIRECTOR.md) for camera, pack, action and sharing support.
 
 Search framing and annotations request semantic map features from an explicit source. The Overpass adapter owns bounded queries, member/tag decoding and request deadlines; callers retain candidate ranking, outline caching, deferred retries and scene placement. Empty, transient and throttled outcomes remain distinct. Traffic sources return road records and installation sources return mapped records with freshness/saturation metadata, so their layers no longer decode upstream elements. ALPR already normalizes its records in the source. Default providers, footprints, road directions, exact-viewport retries and source attribution are unchanged.
 
 Nepal media preloads survive repeated camera-flight updates, but Stop, event disable and replacement remove abandoned frames and revoke pending Facebook sessions. Fallback evidence-card clicks respect the shared drawing-tool pointer lease.
+
+In the Pinokio browser shell, Nepal provider embeds and hidden preloads are
+disabled before creating frames or loading provider SDKs, because the shell can
+redirect iframe navigation to an external browser. Existing source-linked cards
+remain available, and Open Original is an explicit action. Optional approved
+local clips still use the existing fallback; the public pack bundles no witness
+clips. Chrome and Safari retain embeds even when visiting a Pinokio-launched
+server. This compatibility fallback does not repair Pinokio's navigation handler.
 
 Nepal flood lines classify the active terrain or photoreal surface, and the surge marker follows that surface. Geographic route coordinates are unchanged; dynamic lines do not rely on unsupported depth-failure materials. Later media-only shots keep their completed source-path history throughout arrival and card reveal.
 
@@ -35,7 +107,7 @@ The Nepal overview route and lake-shot trail share the river-centerline starting
 
 The event panel omits the WITNESS shortcut. Shot media, source attribution, Open Original links and corridor navigation remain available.
 
-The Mailung Bazzar, Dandaguan YouTube embed follows the provider's playback clock through 0:07, then the scene advances after its 0.65-second media exit. The controller reconciles provider state and source time when the API attaches and while waiting for playback, including missed PLAYING notifications and an already-ended clip. Startup is bounded to five seconds, and stalled playback has a bounded timeout; unavailable or blocked media cannot strand the scene. The authored estimate remains seven seconds plus the exit, replacing older saved holds at runtime without rewriting them. Stop, replacement and teardown revoke pending playback callbacks.
+The Mailung Bazzar, Dandaguan YouTube embed follows the provider's playback clock through 0:07, then the scene advances after its 0.65-second media exit. The controller reconciles provider state and source time when the API attaches and while waiting for playback, including missed PLAYING notifications and an already-ended clip. Startup is bounded to five seconds, and stalled playback has a bounded timeout; unavailable or blocked media cannot strand the scene. When the host deliberately suppresses provider playback and there is no approved local clip, the source card instead uses the authored 7.65-second dwell before the next shot. The authored estimate replaces older saved holds at runtime without rewriting them. Autoplay requires transient Director ownership from Play Scene or Play Shot; LOAD, restoration and seek remain passive. Stop, replacement and teardown revoke that ownership and pending playback callbacks.
 
 Persistent media-led Nepal shots preserve their completed upstream flood path during camera travel. The next reach still reveals after arrival; direct loads reconstruct the prefix and backward replay trims downstream history.
 
@@ -3485,6 +3557,7 @@ are omitted rather than framing the wrong part of the globe.
 - Build gate: `npm run build`
 - Network access: local-only by default (`HOST=localhost` in dev-fresh.sh); LAN is an explicit opt-in via `HOST=0.0.0.0` (launcher prints a key-exposure warning + LAN URL; see SECURITY.md)
 - OpenSky default mode: OAuth (`OPENSKY_AUTH_MODE=oauth`; `anon` works without credentials)
+- Setup doctor resolves `OPENSKY_AUTH_MODE` from the environment and dotenv files. Explicit `anon` and OAuth mode without a client pair report keyless anonymous access (rate-limited); a complete OAuth pair retains the existing presence-only capability wording. Basic and auto modes report the selected mode without guessing which credentials runtime will accept. The proxy's auth behavior is unchanged.
 - Google key expected in Keychain service `google-maps-api` (or `GOOGLE_MAPS_API_KEY`, or `.env`)
 - OpenSky credentials expected in Keychain service `opensky-network` (or env, or `.env`); `OPENSKY_AUTH_MODE` and `OPENSKY_CREDENTIALS_FILE` read from `.env` too
 - Optional-key precedence in `dev-fresh.sh` is uniform — explicit shell env, then `.env`, then Keychain: `OPENAI_API_KEY` (Keychain `openai-api`/`api-key` — voice + HUD summary), `AISSTREAM_API_KEY` (`aisstream-api`/`api-key` — live vessels), `CESIUM_ION_TOKEN` (`cesium-ion`/`token` — Bing stacks), `TOMTOM_API_KEY` (`tomtom-api`/`api-key` — live traffic flow), `FIRMS_MAP_KEY` (`firms-map`/`map-key` — live fires), `LL2_API_TOKEN` (`.env` only)
@@ -3500,6 +3573,7 @@ are omitted rather than framing the wrong part of the globe.
 - A cold OpenSky failure uses the current camera subpoint only to request a cached adsb.lol point fallback capped at 250 nm. A fresh OpenSky response or last-good cache wins; a nominally successful worldwide snapshot more than two minutes old prefers viewport-scoped adsb.lol when available, otherwise the stale source is reported honestly. The fallback is visibly source-labeled and is never presented as a worldwide snapshot.
 - GBFS proxy refuses upstream redirects (`redirect: 'manual'`; any 3xx becomes a 502 and the redirect target is logged server-side only) and enforces its 5 MB response cap while the body streams, cancelling the upstream read past the cap; CCTV health map is bounded.
 - Proxy error payloads are sanitized (no internal error details returned to clients).
+- That holds for the OpenAI and CCTV media paths too: `/api/openai/hud-summary` never relays OpenAI's own `error.message`, `/api/realtime/token` passes successful ephemeral-token responses through but answers with a fixed error when minting fails or upstream rejects the request, and a failed CCTV media fetch stores a fixed camera health `message` — `GET /api/cctv/health` serializes that field and the CCTV panel renders it as a status label, so it is a client surface as much as the response body is.
 - `OPENAI_API_KEY` is server-side only; the browser receives ephemeral Realtime client secrets from `/api/realtime/token`.
 - `AISSTREAM_API_KEY` is server-side only; the browser reads the same-origin `/api/ais-live` cache.
 - `/api/google/nearby-places` keeps the Google key out of Places requests issued for voice scene context.
@@ -3742,7 +3816,8 @@ easier to meet (detection is now on more often), but does not create it.
 - Traffic runs in `sim` mode (white dots, hardcoded speeds) unless `TOMTOM_API_KEY`
   is configured (env or Keychain `tomtom-api`/`api-key`), which enables `live` mode:
   TomTom flow vector tiles via the budget-governed `/api/tomtom` proxy
-  (`.gev-cache/tomtom/`, 120 s TTL, `TOMTOM_DAILY_TILE_BUDGET` default 40k/day),
+  (`.gev-cache/tomtom/`, 120 s TTL, `TOMTOM_DAILY_TILE_BUDGET` default 6k/day,
+  sized so a 31-day month stays inside TomTom's 200K/month free allowance),
   decoded client-side (`flowTiles.js`), matched onto Overpass roads
   (`flowMatch.js`), and rendered as green/amber/red dot color + speed/density
   scaling (`trafficFlowStyle.js`); closures spawn no dots; unmatched roads stay
