@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: gods-eye-view-mobile
+    runtime: node
+    plan: free
+    region: singapore
+    branch: mobile-deploy
+    buildCommand: npm ci
+    startCommand: npm run dev
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: GEV_ALLOWED_HOSTS
+        value: gods-eye-view-mobile.onrender.com
+      - key: OPENSKY_AUTH_MODE
+        value: anon
