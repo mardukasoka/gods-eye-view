@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {normalizeQuakes,loadRecentQuakes} from '../src/indigo/usgs-earthquakes.js';
+const payload={type:'FeatureCollection',features:[{id:'a',geometry:{coordinates:[130,-12,10]},properties:{time:0,mag:3.1,place:'Test',url:'https://earthquake.usgs.gov/earthquakes/eventpage/a'}},{id:'b',geometry:{coordinates:[300,91]},properties:{time:0}}]};
+const data=normalizeQuakes(payload);
+assert.equal(data.length,1);
+assert.equal(data[0].latitude,-12);
+assert.equal(data[0].longitude,130);
+assert.equal(data[0].sourceUrl,'https://earthquake.usgs.gov/earthquakes/eventpage/a');
+assert.deepEqual(await loadRecentQuakes(async()=>({ok:true,json:async()=>payload})),data);
+assert.throws(()=>normalizeQuakes({type:'invalid'}));
+console.log('USGS adapter tests passed');
